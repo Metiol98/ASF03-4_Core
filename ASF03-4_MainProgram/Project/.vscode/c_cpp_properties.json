@@ -3,15 +3,15 @@
         {
             "name": "Target 1",
             "includePath": [
-                "e:\\WorkSpace\\赛莱恩\\手持式加液器\\SoftWare\\ASF03-4_V1.1_2024.11.11_手持加液器X4_TMC5240\\User",
-                "e:\\WorkSpace\\赛莱恩\\手持式加液器\\SoftWare\\ASF03-4_V1.1_2024.11.11_手持加液器X4_TMC5240\\Project",
-                "e:\\WorkSpace\\赛莱恩\\手持式加液器\\SoftWare\\ASF03-4_V1.1_2024.11.11_手持加液器X4_TMC5240\\Libraries\\STM32F10x_StdPeriph_Driver\\inc",
-                "e:\\WorkSpace\\赛莱恩\\手持式加液器\\SoftWare\\ASF03-4_V1.1_2024.11.11_手持加液器X4_TMC5240\\Libraries\\CMSIS",
-                "D:\\SoftWare\\Keil5\\ARM\\ARMCC\\include",
-                "D:\\SoftWare\\Keil5\\ARM\\ARMCC\\include\\rw",
-                "e:\\WorkSpace\\赛莱恩\\手持式加液器\\SoftWare\\ASF03-4_V1.1_2024.11.11_手持加液器X4_TMC5240\\Doc",
-                "e:\\WorkSpace\\赛莱恩\\手持式加液器\\SoftWare\\ASF03-4_V1.1_2024.11.11_手持加液器X4_TMC5240\\Libraries\\CMSIS\\startup",
-                "e:\\WorkSpace\\赛莱恩\\手持式加液器\\SoftWare\\ASF03-4_V1.1_2024.11.11_手持加液器X4_TMC5240\\Libraries\\STM32F10x_StdPeriph_Driver\\src"
+                "g:\\Soft_Project\\ASF-03-4\\ASF03-4_MainProgram\\User",
+                "g:\\Soft_Project\\ASF-03-4\\ASF03-4_MainProgram\\Project",
+                "g:\\Soft_Project\\ASF-03-4\\ASF03-4_MainProgram\\Libraries\\STM32F10x_StdPeriph_Driver\\inc",
+                "g:\\Soft_Project\\ASF-03-4\\ASF03-4_MainProgram\\Libraries\\CMSIS",
+                "C:\\Keil_v5\\ARM\\ARMCC\\include",
+                "C:\\Keil_v5\\ARM\\ARMCC\\include\\rw",
+                "g:\\Soft_Project\\ASF-03-4\\ASF03-4_MainProgram\\Doc",
+                "g:\\Soft_Project\\ASF-03-4\\ASF03-4_MainProgram\\Libraries\\CMSIS\\startup",
+                "g:\\Soft_Project\\ASF-03-4\\ASF03-4_MainProgram\\Libraries\\STM32F10x_StdPeriph_Driver\\src"
             ],
             "defines": [
                 "STM32F10X_HD",

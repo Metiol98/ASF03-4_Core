@@ -44,6 +44,8 @@ typedef struct
 	__IO uint32_t  	Ihold; 				/* 电机保持电流 */
 	__IO uint8_t		CoolStep;			/* 电机节能模式 */
 
+	__IO uint32_t		PipeCallBackVolume;	/* 蠕动泵回调管道容量，单位uL */
+
 //	uint8_t					FristPowerOnFlag;	
 //	uint8_t					ALLDirFlag;
 //	float 					ALLPumpSpeed;

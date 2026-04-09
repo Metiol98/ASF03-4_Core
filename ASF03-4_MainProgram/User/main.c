@@ -41,7 +41,7 @@ int main(void)
 	Systick_Delay_ms(500);	//等待外部电器件上电
 	Flag_Init();			//开机相关标志位初始化
 	SwitchScreen(0);	//开机首页
-	SetTextValue(0,60,"V1.1");	//版本
+	SetTextValue(0,60,"V1.2");	//版本
 	Beep_M();	
 	
 //	DisplayControl(0, 60,0);//隐藏电量电压显示
@@ -316,11 +316,15 @@ int main(void)
 						case 11://【方法选择】-----------------------------------------------------------------------------------
 							MethodHide_Flag=~MethodHide_Flag;
 							if(MethodHide_Flag==0x00)
+							{
 								DisplayControl(0,23,0);		//隐藏方法选择控件
+								DisplayControl(0,22,0);		//隐藏控件后面的按钮
+							}
 							else
 							{	
 								DataRecode_ClearRecode(0,23);//清空数据记录控件
 								DisplayControl(0,23,1);		//显示方法选择控件
+								DisplayControl(0,22,1);		//隐藏控件后面的按钮
 								
 								FLASH_Read(MethodNum_ADR,(u8 *)&MethodNum,sizeof(MethodNum));//读出当前保存的方法总量
 								for(int i=0;i<MethodNum;i++)//发送方法名字
@@ -843,6 +847,7 @@ int main(void)
 							TMC5240_WriteRegister(2,TMC5240_IHOLD_IRUN,	(0x00060000)|(SettingParameters.Irun<<8)|(SettingParameters.Ihold));//IHOLD_IRUN: IHOLD=10, IRUN=25 (最大电流31), IHOLDDELAY=6
 							TMC5240_WriteRegister(3,TMC5240_IHOLD_IRUN,	(0x00060000)|(SettingParameters.Irun<<8)|(SettingParameters.Ihold));//IHOLD_IRUN: IHOLD=10, IRUN=25 (最大电流31), IHOLDDELAY=6
 							TMC5240_WriteRegister(4,TMC5240_IHOLD_IRUN,	(0x00060000)|(SettingParameters.Irun<<8)|(SettingParameters.Ihold));//IHOLD_IRUN: IHOLD=10, IRUN=25 (最大电流31), IHOLDDELAY=6
+							Beep_S();	//完成提示音
 							break;
 						
 						case 7://【电机保持电流】--------------------------------------------------------------------------------------------
@@ -852,6 +857,13 @@ int main(void)
 							TMC5240_WriteRegister(2,TMC5240_IHOLD_IRUN,	(0x00060000)|(SettingParameters.Irun<<8)|(SettingParameters.Ihold));//IHOLD_IRUN: IHOLD=10, IRUN=25 (最大电流31), IHOLDDELAY=6
 							TMC5240_WriteRegister(3,TMC5240_IHOLD_IRUN,	(0x00060000)|(SettingParameters.Irun<<8)|(SettingParameters.Ihold));//IHOLD_IRUN: IHOLD=10, IRUN=25 (最大电流31), IHOLDDELAY=6
 							TMC5240_WriteRegister(4,TMC5240_IHOLD_IRUN,	(0x00060000)|(SettingParameters.Irun<<8)|(SettingParameters.Ihold));//IHOLD_IRUN: IHOLD=10, IRUN=25 (最大电流31), IHOLDDELAY=6
+							Beep_S();	//完成提示音
+							break;
+
+						case 8://【PUMP回调量】--------------------------------------------------------------------------------------------
+							SettingParameters.PipeCallBackVolume = ASCIItoFloat(TFT_USART_RX_BUF);
+							FLASH_Write(SettingParameters_ADR,(u8 *)&SettingParameters,sizeof(SettingParameters));//保存数据
+							Beep_S();	//完成提示音
 							break;
 						
 						case 11://【返回】--------------------------------------------------------------------------------------------

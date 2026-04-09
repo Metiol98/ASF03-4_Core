@@ -370,6 +370,7 @@ void Flag_Init(void)
 	
 	//【隐藏方法选择控件】
 	DisplayControl(0,23,0);		//隐藏方法选择控件
+	DisplayControl(0,22,0);
 	MethodHide_Flag=0;
 	
 	//【方法名称显示归零】
@@ -446,6 +447,38 @@ void WorkMode_Single(void)
 				||(Channel2_MotorStatus.Busy==1)
 				||(Channel3_MotorStatus.Busy==1)
 				||(Channel4_MotorStatus.Busy==1));
+
+	Systick_Delay_ms(200);
+	for(int i=0;i<4;i++)
+	{
+		if(SelctedChannel[i]==1)
+		{//通道选中
+			if (SettingParameters.PipeCallBackVolume != 0)
+			{
+				Liq_temp=(SettingParameters.PipeCallBackVolume*1000.0*256/Pump_OneStep[i]);//计步，以256微步计算；
+				TMC5240_WriteRegister(i+1,TMC5240_VMAX,	ALLPumpSpeed*1197);		//默认240rpm
+
+				if(ALLDirFlag==1)
+					TMC5240_MoveTo(i+1,-Liq_temp);
+				else	
+					TMC5240_MoveTo(i+1,+Liq_temp);
+
+				if(i==0)
+					Channel1_MotorStatus.Busy=1;
+				if(i==1)
+					Channel2_MotorStatus.Busy=1;
+				if(i==2)
+					Channel3_MotorStatus.Busy=1;
+				if(i==3)
+					Channel4_MotorStatus.Busy=1;
+			}
+		}
+	}
+	//等待加液完成
+	while(	(Channel1_MotorStatus.Busy==1)
+				||(Channel2_MotorStatus.Busy==1)
+				||(Channel3_MotorStatus.Busy==1)
+				||(Channel4_MotorStatus.Busy==1));
 	
 	Beep_S();//完成提示音
 	Clear_TFT_USART_RX_Buf();//清空接收BUFF，防止在运行的过程中误触进入其他程序。
@@ -506,6 +539,37 @@ void WorkMode_Interval(void)
 		while(Add_IntervalTimeFlag==0);//等待间隔时间到
 	}
 
+	for(int i=0;i<4;i++)
+	{
+		if(SelctedChannel[i]==1)
+		{//通道选中
+			if (SettingParameters.PipeCallBackVolume != 0)
+			{
+				Liq_temp=(SettingParameters.PipeCallBackVolume*1000.0*256/Pump_OneStep[i]);//计步，以256微步计算；
+				TMC5240_WriteRegister(i+1,TMC5240_VMAX,	ALLPumpSpeed*1197);		//默认240rpm
+
+				if(ALLDirFlag==1)
+					TMC5240_MoveTo(i+1,-Liq_temp);
+				else	
+					TMC5240_MoveTo(i+1,+Liq_temp);
+
+				if(i==0)
+					Channel1_MotorStatus.Busy=1;
+				if(i==1)
+					Channel2_MotorStatus.Busy=1;
+				if(i==2)
+					Channel3_MotorStatus.Busy=1;
+				if(i==3)
+					Channel4_MotorStatus.Busy=1;
+			}
+		}
+	}
+	//等待加液完成
+	while(	(Channel1_MotorStatus.Busy==1)
+				||(Channel2_MotorStatus.Busy==1)
+				||(Channel3_MotorStatus.Busy==1)
+				||(Channel4_MotorStatus.Busy==1));
+
 	Add_Times=0;
 	Beep_S();//完成提示音
 	sprintf(Str,"%d",(uint32_t)Add_Times);	 //类型转换
@@ -521,6 +585,7 @@ void WorkMode_Interval(void)
  *****************************************************************/
 void WorkMode_Continued(void)
 {
+	uint32_t Liq_temp=0;		//加液量临时换算
 	Systick_Delay_ms(50);
 
 	for(int i=0;i<4;i++)
@@ -542,6 +607,38 @@ void WorkMode_Continued(void)
 				Channel3_MotorStatus.Busy=1;
 			if(i==3)
 				Channel4_MotorStatus.Busy=1;
+		}
+	}
+	//等待加液完成
+	while(	(Channel1_MotorStatus.Busy==1)
+				||(Channel2_MotorStatus.Busy==1)
+				||(Channel3_MotorStatus.Busy==1)
+				||(Channel4_MotorStatus.Busy==1));
+
+	Systick_Delay_ms(700);
+	for(int i=0;i<4;i++)
+	{
+		if(SelctedChannel[i]==1)
+		{//通道选中
+			if (SettingParameters.PipeCallBackVolume != 0)
+			{
+				Liq_temp=(SettingParameters.PipeCallBackVolume*1000.0*256/Pump_OneStep[i]);//计步，以256微步计算；
+				TMC5240_WriteRegister(i+1,TMC5240_VMAX,	ALLPumpSpeed*1197);		//默认240rpm
+
+				if(ALLDirFlag==1)
+					TMC5240_MoveTo(i+1,-Liq_temp);
+				else	
+					TMC5240_MoveTo(i+1,+Liq_temp);
+
+				if(i==0)
+					Channel1_MotorStatus.Busy=1;
+				if(i==1)
+					Channel2_MotorStatus.Busy=1;
+				if(i==2)
+					Channel3_MotorStatus.Busy=1;
+				if(i==3)
+					Channel4_MotorStatus.Busy=1;
+			}
 		}
 	}
 	//等待加液完成

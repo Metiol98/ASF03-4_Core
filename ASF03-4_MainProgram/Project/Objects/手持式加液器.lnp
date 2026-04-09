@@ -38,6 +38,6 @@
 ".\objects\bsp_tmc5240spi.o"
 ".\objects\bsp_basictim.o"
 --library_type=microlib --strict --scatter ".\Objects\手持式加液器.sct"
---summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list ".\Listings\手持式加液器.map" -o .\Objects\手持式加液器.axf
