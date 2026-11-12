@@ -6,7 +6,7 @@ uint8_t Emergency_Stop_Flag=0;	//急停标志位
 /*****************************************************************/
 //校准相关
 float Pump_Theoretically[4];//校准模式预计加液量，默认7000；
-float Pump_Actually[4];//校准模式实际加液量。
+double Pump_Actually[4];//校准模式实际加液量。
 
 uint8_t ScreenState=0;//当前屏幕状态，0在工作界面，1在校准界面,3其界面不动作。
 /*****************************************************************/
@@ -49,42 +49,47 @@ uint8_t               Method_SwitchFlag=0;		//方法管理界面选中的方法的位次
  *****************************************************************/
 int ASCIItoDEC(uint8_t *data)
 {
-	switch(*data)//屏幕控件
-	{
-		case 0x30:
-			return 0;
-		
-		case 0x31:
-			return 1;
-		
-		case 0x32:
-			return 2;
-		
-		case 0x33:
-			return 3;
-		
-		case 0x34:
-			return 4;
-		
-		case 0x35:
-			return 5;
-		
-		case 0x36:
-			return 6;
-		
-		case 0x37:
-			return 7;
-		
-		case 0x38:
-			return 8;
-		
-		case 0x39:
-			return 9;
-		
-		default:
-			break;
-	}
-	return NULL;
+	if( (*data>=0x30) && (*data<=0x39) )		
+		return (*data - 0x30);
+	else
+		return 0;
+	
+//	switch(*data)//屏幕控件
+//	{
+//		case 0x30:
+//			return 0;
+//		
+//		case 0x31:
+//			return 1;
+//		
+//		case 0x32:
+//			return 2;
+//		
+//		case 0x33:
+//			return 3;
+//		
+//		case 0x34:
+//			return 4;
+//		
+//		case 0x35:
+//			return 5;
+//		
+//		case 0x36:
+//			return 6;
+//		
+//		case 0x37:
+//			return 7;
+//		
+//		case 0x38:
+//			return 8;
+//		
+//		case 0x39:
+//			return 9;
+//		
+//		default:
+//			break;
+//	}
+//	return NULL;
 }
 
 /*****************************************************************
@@ -95,92 +100,135 @@ int ASCIItoDEC(uint8_t *data)
  *****************************************************************/
 float ASCIItoFloat(uint8_t *Arry)
 {
-	float data;//整数暂存
-	float	decimal_1;//小数的整数部分暂存
-	float decimal_0;//小数的小数部分暂存
-	
-	int dataLength_bump=8;//数据位数基数标志位
-	int	dataLength;//数据的总位数，包括小数点
-	int	point=0;//小数的整数位数。
-	
-	while(Arry[dataLength_bump]!=0x00)
+	float data = 0;					 /* 整数暂存 */
+	float decimal_1;				 /* 小数的整数部分暂存 */
+	float decimal_0;				 /* 小数的小数部分暂存 */
+	int dataLength_bump = 8; /* 数据位数基数标志位 */
+	int dataLength;					 /* 数据的总位数，包括小数点 */
+	int point = 0;					 /* 小数的整数位数 */
+
+	while (Arry[dataLength_bump] != 0x00)
 	{
-		if(Arry[dataLength_bump]==0x2E)
-			point=dataLength_bump-8;//表示有小数，且poin为整数部分的位数
-		
-		dataLength_bump++;//判断数据位数，包含小数点
+		if (Arry[dataLength_bump] == 0x2E)
+			point = dataLength_bump - 8; /* 表示有小数，且poin为整数部分的位数 */
+		dataLength_bump++;						 /* 判断数据位数，包含小数点 */
 	}
-	dataLength=dataLength_bump-8;//总长度
-	
-	if(point!=0)//是小数
-	{
-		switch(point)
-		{
-			case 1:
-				decimal_1=ASCIItoDEC(&Arry[8]);
-				break;
-			case 2:
-				decimal_1=ASCIItoDEC(&Arry[8])*10+ASCIItoDEC(&Arry[9]);
-				break;
-			case 3:
-				decimal_1=ASCIItoDEC(&Arry[8])*100+ASCIItoDEC(&Arry[9])*10+ASCIItoDEC(&Arry[10]);
-				break;
-			case 4:
-				decimal_1=ASCIItoDEC(&Arry[8])*1000+ASCIItoDEC(&Arry[9])*100+ASCIItoDEC(&Arry[10])*10+ASCIItoDEC(&Arry[11]);
-				break;
-			
-			default:
-				break;
-		}
-		switch(dataLength-point-1)
-		{
-			case 1:
-				decimal_0=ASCIItoDEC(&Arry[8+point+1])*0.1;
-				break;
-			case 2:
-				decimal_0=ASCIItoDEC(&Arry[8+point+1])*0.1+ASCIItoDEC(&Arry[8+point+2])*0.01;
-				break;
-			case 3:
-				decimal_0=ASCIItoDEC(&Arry[8+point+1])*0.1+ASCIItoDEC(&Arry[8+point+2])*0.01+ASCIItoDEC(&Arry[8+point+3])*0.001;
-				break;
-			case 4:
-				decimal_0=ASCIItoDEC(&Arry[8+point+1])*0.1+ASCIItoDEC(&Arry[8+point+2])*0.01+ASCIItoDEC(&Arry[8+point+3])*0.001+ASCIItoDEC(&Arry[8+point+4])*0.0001;
-				break;
-			
-			default:
-				break;
-		}
-		return decimal_1+decimal_0;		
+	dataLength = dataLength_bump - 8; /* 总长度 */
+
+	if (point != 0)
+	{								 /* 是小数 */
+		decimal_1 = 0; /* 整数部分 */
+		for (int i = 0; i < point; i++)
+			decimal_1 = decimal_1 * 10 + ASCIItoDEC(&Arry[8 + i]);
+
+		decimal_0 = 0; /* 小数部分 */
+		for (int i = (dataLength - point - 1); i > 0; i--)
+			decimal_0 = decimal_0 * 0.1 + ASCIItoDEC(&Arry[8 + point + i]);
+		decimal_0 = decimal_0 * 0.1;
+
+		if (Arry[8] != 0x2D)
+			return decimal_1 + decimal_0;
+		else
+			return -(decimal_1 + decimal_0);
 	}
-	
-	else//是整数
-	{
-		switch(dataLength)
-		{
-			case 1:
-				data=ASCIItoDEC(&Arry[8]);
-				break;
-			case 2:
-				data=ASCIItoDEC(&Arry[8])*10+ASCIItoDEC(&Arry[9]);
-				break;
-			case 3:
-				data=ASCIItoDEC(&Arry[8])*100+ASCIItoDEC(&Arry[9])*10+ASCIItoDEC(&Arry[10]);
-				break;
-			case 4:
-				data=ASCIItoDEC(&Arry[8])*1000+ASCIItoDEC(&Arry[9])*100+ASCIItoDEC(&Arry[10])*10+ASCIItoDEC(&Arry[11]);
-				break;
-			case 5:
-				data=ASCIItoDEC(&Arry[8])*10000+ASCIItoDEC(&Arry[9])*1000+ASCIItoDEC(&Arry[10])*100+ASCIItoDEC(&Arry[11])*10+ASCIItoDEC(&Arry[12]);
-				break;
-			case 6:
-				data=ASCIItoDEC(&Arry[8])*100000+ASCIItoDEC(&Arry[9])*10000+ASCIItoDEC(&Arry[10])*1000+ASCIItoDEC(&Arry[11])*100+ASCIItoDEC(&Arry[12])*10+ASCIItoDEC(&Arry[13]);
-				break;
-			
-			default:
-				break;
-		}
-		return data;
+
+	else
+	{ /* 是整数 */
+		data = 0;
+		for (int i = 0; i < dataLength; i++)
+			data = data * 10 + ASCIItoDEC(&Arry[8 + i]);
+
+		if (Arry[8] != 0x2D)
+			return data;
+		else
+			return -data;
 	}
+//	float data;//整数暂存
+//	float	decimal_1;//小数的整数部分暂存
+//	float decimal_0;//小数的小数部分暂存
+//	
+//	int dataLength_bump=8;//数据位数基数标志位
+//	int	dataLength;//数据的总位数，包括小数点
+//	int	point=0;//小数的整数位数。
+//	
+//	while(Arry[dataLength_bump]!=0x00)
+//	{
+//		if(Arry[dataLength_bump]==0x2E)
+//			point=dataLength_bump-8;//表示有小数，且poin为整数部分的位数
+//		
+//		dataLength_bump++;//判断数据位数，包含小数点
+//	}
+//	dataLength=dataLength_bump-8;//总长度
+//	
+//	if(point!=0)//是小数
+//	{
+//		switch(point)
+//		{
+//			case 1:
+//				decimal_1=ASCIItoDEC(&Arry[8]);
+//				break;
+//			case 2:
+//				decimal_1=ASCIItoDEC(&Arry[8])*10+ASCIItoDEC(&Arry[9]);
+//				break;
+//			case 3:
+//				decimal_1=ASCIItoDEC(&Arry[8])*100+ASCIItoDEC(&Arry[9])*10+ASCIItoDEC(&Arry[10]);
+//				break;
+//			case 4:
+//				decimal_1=ASCIItoDEC(&Arry[8])*1000+ASCIItoDEC(&Arry[9])*100+ASCIItoDEC(&Arry[10])*10+ASCIItoDEC(&Arry[11]);
+//				break;
+//			
+//			default:
+//				break;
+//		}
+//		switch(dataLength-point-1)
+//		{
+//			case 1:
+//				decimal_0=ASCIItoDEC(&Arry[8+point+1])*0.1;
+//				break;
+//			case 2:
+//				decimal_0=ASCIItoDEC(&Arry[8+point+1])*0.1+ASCIItoDEC(&Arry[8+point+2])*0.01;
+//				break;
+//			case 3:
+//				decimal_0=ASCIItoDEC(&Arry[8+point+1])*0.1+ASCIItoDEC(&Arry[8+point+2])*0.01+ASCIItoDEC(&Arry[8+point+3])*0.001;
+//				break;
+//			case 4:
+//				decimal_0=ASCIItoDEC(&Arry[8+point+1])*0.1+ASCIItoDEC(&Arry[8+point+2])*0.01+ASCIItoDEC(&Arry[8+point+3])*0.001+ASCIItoDEC(&Arry[8+point+4])*0.0001;
+//				break;
+//			
+//			default:
+//				break;
+//		}
+//		return decimal_1+decimal_0;		
+//	}
+//	
+//	else//是整数
+//	{
+//		switch(dataLength)
+//		{
+//			case 1:
+//				data=ASCIItoDEC(&Arry[8]);
+//				break;
+//			case 2:
+//				data=ASCIItoDEC(&Arry[8])*10+ASCIItoDEC(&Arry[9]);
+//				break;
+//			case 3:
+//				data=ASCIItoDEC(&Arry[8])*100+ASCIItoDEC(&Arry[9])*10+ASCIItoDEC(&Arry[10]);
+//				break;
+//			case 4:
+//				data=ASCIItoDEC(&Arry[8])*1000+ASCIItoDEC(&Arry[9])*100+ASCIItoDEC(&Arry[10])*10+ASCIItoDEC(&Arry[11]);
+//				break;
+//			case 5:
+//				data=ASCIItoDEC(&Arry[8])*10000+ASCIItoDEC(&Arry[9])*1000+ASCIItoDEC(&Arry[10])*100+ASCIItoDEC(&Arry[11])*10+ASCIItoDEC(&Arry[12]);
+//				break;
+//			case 6:
+//				data=ASCIItoDEC(&Arry[8])*100000+ASCIItoDEC(&Arry[9])*10000+ASCIItoDEC(&Arry[10])*1000+ASCIItoDEC(&Arry[11])*100+ASCIItoDEC(&Arry[12])*10+ASCIItoDEC(&Arry[13]);
+//				break;
+//			
+//			default:
+//				break;
+//		}
+//		return data;
+//	}
 }
 
 /*****************************************************************

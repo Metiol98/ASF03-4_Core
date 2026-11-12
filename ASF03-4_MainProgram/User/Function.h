@@ -7,7 +7,7 @@ extern uint8_t Emergency_Stop_Flag;			//急停标志位
 /*****************************************************************/
 //校准相关
 extern float 		Pump_Theoretically[4];	//校准模式预计加液量，默认7000；
-extern float 		Pump_Actually[4];				//校准模式实际加液量。
+extern double 		Pump_Actually[4];				//校准模式实际加液量。
 extern float 		Pump_OneStep[4];				//单步加液量
 
 extern uint8_t ScreenState;					//当前屏幕状态，0在工作界面，1在校准界面。

@@ -533,6 +533,8 @@ int main(void)
 							SetTextValue(7,6,Str);
 							sprintf(Str,"%d",SettingParameters.Ihold);	   //类型转换 
 							SetTextValue(7,7,Str);
+							sprintf(Str,"%d",SettingParameters.PipeCallBackVolume);	   //类型转换 
+							SetTextValue(7,8,Str);
 							ScreenState=3;//屏幕进设置界面
 							break;
 													
