@@ -1,7 +1,0 @@
-{
-  "files.associations": {
-    "head.h": "c",
-    "function.h": "c",
-    "bsp_flash.h": "c"
-  }
-}
